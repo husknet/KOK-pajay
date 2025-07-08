@@ -1,6 +1,6 @@
 // app/api/log-submit/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { logToTelegram } from '@/lib/telegramLogger'
+import { logToTelegram } from '../../../lib/telegramLogger'
 
 export async function POST(req: NextRequest) {
   try {
