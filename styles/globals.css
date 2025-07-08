@@ -1,0 +1,45 @@
+/* styles/globals.css */
+
+/* Tailwind base styles (only if Tailwind is enabled) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Universal box-sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Set default font and background */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #e6f7ff; /* Very light blue */
+  color: #1f2937; /* Dark gray (text) */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Inputs and buttons */
+input, button, select, textarea {
+  font: inherit;
+}
+
+/* Prevent selection highlighting during drag */
+::selection {
+  background: #b3e5fc;
+  color: #000;
+}
+
+/* Smooth transitions for modern UI */
+button,
+input {
+  transition: all 0.2s ease-in-out;
+}
