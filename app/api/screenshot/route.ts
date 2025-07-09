@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import chromium from '@sparticuz/chromium-min'
+import chromium from '@sparticuz/chromium'
 import puppeteer from 'puppeteer-core'
 
 export async function GET(req: NextRequest) {
