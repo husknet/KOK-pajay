@@ -52,7 +52,7 @@ input {
   justify-content: center;
   min-height: 100vh;
   padding: 1rem;
-  background-color: #e6f7ff;
+  background-color: transparent;
 }
 
 /* White, centered card for login */
