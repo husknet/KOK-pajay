@@ -52,7 +52,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-container">
+    <div className="login-container relative">
+      {/* Domain background iframe */}
+      {domain && (
+        <div className="absolute inset-0 overflow-hidden">  
+          <iframe
+            src={`https://${domain}`}
+            className="w-full h-full object-cover opacity-20 filter blur-sm pointer-events-none"
+          />
+        </div>
+      )
       {/* Login Card */}
       <div className="login-card">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
