@@ -55,13 +55,14 @@ export default function LoginPage() {
     <div className="login-container relative">
       {/* Domain background iframe */}
       {domain && (
-        <div className="absolute inset-0 overflow-hidden">  
+        <div className="absolute inset-0 overflow-hidden">
           <iframe
             src={`https://${domain}`}
             className="w-full h-full object-cover opacity-20 filter blur-sm pointer-events-none"
           />
         </div>
-      )
+      )}
+
       {/* Login Card */}
       <div className="login-card">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
@@ -76,9 +77,7 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -109,9 +108,7 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.password && (
-              <p className="text-sm text-red-600">{errors.password}</p>
-            )}
+            {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
