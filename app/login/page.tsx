@@ -52,9 +52,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-light-blue p-4">
+    <div className="login-container">
       {/* Login Card */}
-      <div className="relative z-10 bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+      <div className="login-card">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
 
         {!confirmedEmail ? (
@@ -115,8 +115,8 @@ export default function LoginPage() {
 
       {/* Submission Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl p-6 text-center max-w-xs">
+        <div className="modal-overlay">
+          <div className="modal-content">
             <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
             <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
