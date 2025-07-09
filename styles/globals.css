@@ -1,6 +1,6 @@
 /* styles/globals.css */
 
-/* Tailwind base styles (only if Tailwind is enabled) */
+/* Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,4 +42,48 @@ input, button, select, textarea {
 button,
 input {
   transition: all 0.2s ease-in-out;
+}
+
+/* Layout and component styles */
+/* Centers the login card */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #e6f7ff;
+}
+
+/* White, centered card for login */
+.login-card {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  max-width: 28rem;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* Modal overlay behind content */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  max-width: 20rem;
+  text-align: center;
 }
