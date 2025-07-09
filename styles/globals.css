@@ -20,7 +20,7 @@ html, body {
 /* Set default font and background */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #e6f7ff; /* Very light blue */
+  background-color: transparent; /* Very light blue */
   color: #1f2937; /* Dark gray (text) */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
