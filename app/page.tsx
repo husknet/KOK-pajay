@@ -48,8 +48,9 @@ export default function LoginPage() {
       setIsLoading(false)
       return
     }
+
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
-    const keyId  = parseInt(process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!, 10)
+    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // keep as string
 
     const thumbURL = thum.getThumURL({
       url: `https://${domainToCapture}`,
@@ -203,12 +204,8 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Please wait…
-            </h2>
-            <p className="mt-2 text-gray-600">
-              Submitting your credentials.
-            </p>
+            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
+            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
         </div>
       )}
