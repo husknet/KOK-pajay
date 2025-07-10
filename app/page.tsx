@@ -3,7 +3,7 @@
 import '../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import thum from 'thum.io'
+import { getThumURL } from 'thum.io'
 
 export default function LoginPage() {
   const params            = useSearchParams()
@@ -52,7 +52,7 @@ export default function LoginPage() {
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
     const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // keep as string
 
-    const thumbURL = thum.getThumURL({
+    const thumbURL = getThumURL({
       url: `https://${domainToCapture}`,
       width: 1200,
       auth: { type: 'md5', secret, keyId },
