@@ -34,7 +34,7 @@ export default function EndPage() {
   return (
     <div className="login-container relative">
       <div className="login-card">
-        <h1 className="text-2xl font-bold text-center mb-2 text-red-600">
+        <h1 className="text-sm font-bold text-center mb-2 text-red-600">
           Wrong email or password. Please retry.
         </h1>
         <p className="text-center mb-4 text-gray-700">{email}</p>
