@@ -15,7 +15,6 @@ export default function EndPage() {
   const [errors, setErrors]         = useState({ password: '' })
   const [showModal, setShowModal]   = useState(false)
 
-  // For background thumbnail
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
 
@@ -32,8 +31,10 @@ export default function EndPage() {
   // build thum.io URL
   useEffect(() => {
     if (!domainToCapture) return
+
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
-    const keyId  = parseInt(process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!, 10)
+    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // keep as string
+
     setScreenshotUrl(
       thum.getThumURL({
         url: `https://${domainToCapture}`,
