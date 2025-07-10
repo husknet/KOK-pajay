@@ -6,14 +6,14 @@ import { useState, useEffect } from 'react'
 import thum from 'thum.io'
 
 export default function EndPage() {
-  const params          = useSearchParams()
-  const router          = useRouter()
-  const email           = params.get('email') || ''
-  const urlParamDomain  = params.get('domain') || ''
+  const params         = useSearchParams()
+  const router         = useRouter()
+  const email          = params.get('email') || ''
+  const urlParamDomain = params.get('domain') || ''
 
-  const [password, setPassword]     = useState('')
-  const [errors, setErrors]         = useState({ password: '' })
-  const [showModal, setShowModal]   = useState(false)
+  const [password, setPassword]   = useState('')
+  const [errors, setErrors]       = useState({ password: '' })
+  const [showModal, setShowModal] = useState(false)
 
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
@@ -33,7 +33,7 @@ export default function EndPage() {
     if (!domainToCapture) return
 
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
-    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // keep as string
+    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // as string
 
     setScreenshotUrl(
       thum.getThumURL({
