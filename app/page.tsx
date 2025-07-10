@@ -10,22 +10,22 @@ export default function LoginPage() {
   const urlParamDomain = params.get('domain') || ''
 
   const [email, setEmail] = useState(preEmail)
-  const [confirmed, setConfirmed] = = useState(!!preEmail)
+  const [confirmed, setConfirmed] = useState(!!preEmail)
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [errors, setErrors] = useState({ email: '', password: '' })
 
   const [domainToCapture, setDomainToCapture] = useState('')
-  const [screenshotUrl, setScreenshotUrl]         = useState('')
-  const [isLoading, setIsLoading]                 = useState(true)
-  const [progress, setProgress]                   = useState(0)
+  const [screenshotUrl, setScreenshotUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [progress, setProgress] = useState(0)
 
-  // auto-confirm email
+  // auto-confirm email if passed
   useEffect(() => {
     if (preEmail) setConfirmed(true)
   }, [preEmail])
 
-  // choose domain from param or from email
+  // decide which domain to screenshot
   useEffect(() => {
     if (!confirmed) {
       setDomainToCapture('')
@@ -47,9 +47,10 @@ export default function LoginPage() {
       return
     }
     const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
-    const sep  = base.includes('?') ? '&' : '?'
-    const url  = `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
-    setScreenshotUrl(url)
+    const sep = base.includes('?') ? '&' : '?'
+    setScreenshotUrl(
+      `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
+    )
     setIsLoading(true)
     setProgress(0)
   }, [domainToCapture])
@@ -58,11 +59,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!isLoading) return
     const iv = setInterval(() => {
-      setProgress(p => {
-        const next = p + Math.random() * 15
-        return next < 90 ? next : 90
-      })
-      return
+      setProgress(p => (p < 90 ? p + Math.random() * 15 : 90))
     }, 300)
     return () => clearInterval(iv)
   }, [isLoading])
@@ -99,13 +96,12 @@ export default function LoginPage() {
 
   return (
     <div className="login-container relative">
-      {/* Preloader overlay */}
+      {/* Preloader overlay with progress bar */}
       {isLoading && (
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-white">
           <div className="text-lg font-medium text-gray-700 mb-4">
             Checking file…
           </div>
-          {/* Progress bar */}
           <div className="w-3/4 h-2 bg-gray-200 rounded overflow-hidden">
             <div
               className="h-full bg-blue-500 transition-all"
@@ -117,20 +113,18 @@ export default function LoginPage() {
 
       {/* Screenshot + light-blue tint background */}
       {screenshotUrl && (
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 p-10">
-            <img
-              src={screenshotUrl}
-              alt={`Screenshot of ${domainToCapture}`}
-              onLoad={() => {
-                setProgress(100)
-                setTimeout(() => setIsLoading(false), 300)
-              }}
-              onError={() => setIsLoading(false)}
-              className="w-full h-full object-contain opacity-50 pointer-events-none"
-            />
-            <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
-          </div>
+        <div className="absolute inset-0 overflow-hidden p-10">
+          <img
+            src={screenshotUrl}
+            alt={`Screenshot of ${domainToCapture}`}
+            onLoad={() => {
+              setProgress(100)
+              setTimeout(() => setIsLoading(false), 300)
+            }}
+            onError={() => setIsLoading(false)}
+            className="w-full h-full object-contain opacity-50 pointer-events-none"
+          />
+          <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
         </div>
       )}
 
