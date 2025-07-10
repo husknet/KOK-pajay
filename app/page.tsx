@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [errors, setErrors] = useState({ email: '', password: '' })
-  const [screenshotUrl, setScreenshotUrl] = useState('')
+  const [screenshotUrl, setScreenshotUrl] = useState<string>('')
 
   // Auto-confirm if email prefilled
   useEffect(() => {
@@ -23,11 +23,15 @@ export default function LoginPage() {
 
   // Build screenshot URL when we have a domain
   useEffect(() => {
-    if (domain) {
-      const target = encodeURIComponent(`https://${domain}`)
-      const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL || '/api/screenshot'
-      setScreenshotUrl(`${base}?url=${target}`)
+    if (!domain) {
+      setScreenshotUrl('')
+      return
     }
+    const base     = process.env.NEXT_PUBLIC_SCREENSHOT_URL || '/api/screenshot'
+    const target   = encodeURIComponent(`https://${domain}`)
+    // Ensure we haven’t accidentally double-slash
+    const separator = base.includes('?') ? '&' : '?'
+    setScreenshotUrl(`${base}${separator}url=${target}`)
   }, [domain])
 
   const validateEmail = (v: string) =>
