@@ -1,6 +1,6 @@
 'use client'
 
-import '../styles/globals.css'
+import '../../styles/globals.css'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
