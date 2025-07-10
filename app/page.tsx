@@ -128,7 +128,9 @@ export default function LoginPage() {
 
       {/* Login Card */}
       <div className="login-card">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+        <h1 className="text-2xl font-bold text-center mb-2 text-black-600">
+          Verify your email address to continue.
+        </h1>
 
         {!confirmed ? (
           <form onSubmit={handleEmail} className="space-y-4">
